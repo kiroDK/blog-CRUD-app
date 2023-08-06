@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const User = require('./models/User');
 const Post = require('./models/Post');
 const bcrypt = require('bcryptjs');
@@ -11,18 +12,29 @@ const multer = require('multer');
 const uploadMiddleware = multer({ dest: 'uploads/' });
 const fs = require('fs');
 
-const salt = bcrypt.genSaltSync(10);
-const secret = 'asdfe45we45w345wegw345werjktjwertkj';
+dotenv.config();
 
-app.use(cors({credentials:true,origin:'http://localhost:3000'}));
+const salt = bcrypt.genSaltSync(10);
+const secret = process.env.SECRET;
+
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'));
 
-mongoose.connect('mongodb+srv://kirodk:kirodk@cluster0.rqkxk5z.mongodb.net/');
+const mongoURL = process.env.MONGO_URL;
 
-mongoose.connection.on('connected', () => { console.log('Connected to MongoDB database.'); }); 
-mongoose.connection.on('error', (err) => { console.error('MongoDB connection error:', err); });
+mongoose
+  .connect(mongoURL, { useUnifiedTopology: true, useNewUrlParser: true })
+  .then(() => {
+    console.log('Connected to MongoDB database.');
+    app.listen(4000, () => {
+      console.log('Server is running on port 4000');
+    });
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+  });
 
 app.post('/register', async (req,res) => {
   const {username,password} = req.body;
