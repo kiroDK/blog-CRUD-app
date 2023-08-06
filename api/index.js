@@ -151,6 +151,30 @@ app.get('/post/:id', async (req, res) => {
   res.json(postDoc);
 })
 
+app.delete("/post/:id", async (req, res) => {
+  const postId = req.params.id;
+  const { token } = req.cookies;
+
+  try {
+    const decodedToken = jwt.verify(token, secret);
+    const postDoc = await Post.findById(postId);
+
+    // Check if the user is the author of the post
+    if (postDoc.author.equals(decodedToken.id)) {
+      // Delete the post
+      await Post.findByIdAndDelete(postId);
+      return res.json("Post deleted successfully.");
+    } else {
+      return res
+        .status(403)
+        .json("You are not authorized to delete this post.");
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Server error.");
+  }
+});
+
 
 
 app.listen(4000);
