@@ -1,19 +1,11 @@
-<<<<<<< HEAD
+require("dotenv").config(); // Load environment variables from .env file
+
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./models/User");
 const Post = require("./models/Post");
 const bcrypt = require("bcryptjs");
-=======
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const User = require('./models/User');
-const Post = require('./models/Post');
-const bcrypt = require('bcryptjs');
->>>>>>> db355bb5d2d62e551dd312410dac4580cfa48870
 const app = express();
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
@@ -21,27 +13,15 @@ const multer = require("multer");
 const uploadMiddleware = multer({ dest: "uploads/" });
 const fs = require("fs");
 
-require("dotenv").config();
-
-<<<<<<< HEAD
 const salt = bcrypt.genSaltSync(10);
-const secret = process.env.SECRET;
-const mongoURI = process.env.MONGO_URL;
+const secret = process.env.SECRET; // Use environment variable for secret
+const mongoURI = process.env.MONGO_URL; // Use environment variable for MongoDB URI
 
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
-=======
-dotenv.config();
-
-const salt = bcrypt.genSaltSync(10);
-const secret = process.env.SECRET;
-
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
->>>>>>> db355bb5d2d62e551dd312410dac4580cfa48870
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 
-<<<<<<< HEAD
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -53,21 +33,6 @@ mongoose.connection.on("connected", () => {
 mongoose.connection.on("error", (err) => {
   console.error("MongoDB connection error:", err);
 });
-=======
-const mongoURL = process.env.MONGO_URL;
-
-mongoose
-  .connect(mongoURL, { useUnifiedTopology: true, useNewUrlParser: true })
-  .then(() => {
-    console.log('Connected to MongoDB database.');
-    app.listen(4000, () => {
-      console.log('Server is running on port 4000');
-    });
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
-  });
->>>>>>> db355bb5d2d62e551dd312410dac4580cfa48870
 
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
@@ -188,8 +153,6 @@ app.get("/post/:id", async (req, res) => {
 app.delete("/post/:id", async (req, res) => {
   const postId = req.params.id;
   const { token } = req.cookies;
-<<<<<<< HEAD
-=======
 
   try {
     const decodedToken = jwt.verify(token, secret);
@@ -211,35 +174,8 @@ app.delete("/post/:id", async (req, res) => {
   }
 });
 
->>>>>>> db355bb5d2d62e551dd312410dac4580cfa48870
-
-  try {
-    const decodedToken = jwt.verify(token, secret);
-    const postDoc = await Post.findById(postId);
-
-<<<<<<< HEAD
-    // Check if the user is the author of the post
-    if (postDoc.author.equals(decodedToken.id)) {
-      // Delete the post
-      await Post.findByIdAndDelete(postId);
-      return res.json("Post deleted successfully.");
-    } else {
-      return res
-        .status(403)
-        .json("You are not authorized to delete this post.");
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).json("Server error.");
-  }
-});
-
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 4000; // Use environment variable for port
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-=======
-app.listen(4000);
-//
->>>>>>> db355bb5d2d62e551dd312410dac4580cfa48870
