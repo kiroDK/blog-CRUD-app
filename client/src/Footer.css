@@ -1,0 +1,26 @@
+/* Footer.css */
+footer {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    text-align: center;
+    border-top: 1px solid #e9ecef;
+  }
+  
+  footer p {
+    margin: 0.5rem 0;
+  }
+  
+  footer nav {
+    margin: 0.5rem 0;
+  }
+  
+  footer nav a {
+    margin: 0 1rem;
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  footer nav a:hover {
+    text-decoration: underline;
+  }
+  

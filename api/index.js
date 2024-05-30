@@ -11,15 +11,21 @@ const multer = require("multer");
 const uploadMiddleware = multer({ dest: "uploads/" });
 const fs = require("fs");
 
+require("dotenv").config();
+
 const salt = bcrypt.genSaltSync(10);
-const secret = "asdfe45we45w345wegw345werjktjwertkj";
+const secret = process.env.SECRET;
+const mongoURI = process.env.MONGO_URL;
 
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 
-mongoose.connect("mongodb+srv://kirodk:kirodk@cluster0.rqkxk5z.mongodb.net/");
+mongoose.connect(mongoURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 mongoose.connection.on("connected", () => {
   console.log("Connected to MongoDB database.");
@@ -45,6 +51,9 @@ app.post("/register", async (req, res) => {
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const userDoc = await User.findOne({ username });
+  if (!userDoc) {
+    return res.status(400).json("User not found");
+  }
   const passOk = bcrypt.compareSync(password, userDoc.password);
   if (passOk) {
     // logged in
@@ -165,5 +174,8 @@ app.delete("/post/:id", async (req, res) => {
   }
 });
 
-app.listen(4000);
-//
+const port = process.env.PORT || 4000;
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
